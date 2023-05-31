@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.games.GroupingDao">
+	
+	<insert id="add"  parameterType="grouping">
+		insert into grouping(id,name,sort,playerid,eventsid) 
+		values (#{id},#{name},#{sort},#{player.id},#{events.id});
+	</insert>
+	
+	<select id="findGroupingName"  parameterType="grouping" resultType="grouping">
+		SELECT DISTINCT NAME from grouping where eventsid = #{events.id}
+	</select>
+	
+	<select id="findList" parameterType="grouping" resultType="grouping">
+		select 
+			a.id ,
+			a.name,
+			a.sort,
+			a.playerid as "player.id",
+			b.realName as "player.realName",
+			b.sex as "player.sex",
+			b.dept as "player.dept",
+			b.code as "player.code",
+			a.eventsid as "events.id",
+			c.name as "events.name"
+		from grouping a
+		left join player b on a.playerid = b.id
+		inner join events c on a.eventsid = c.id
+        <if test="events != null and events.id!=null">  
+              AND 	a.eventsid = #{events.id}
+        </if>
+        <if test="name != null and '' != name">  
+              AND 	a.name = #{name}
+        </if>
+        <if test="player != null and player.id!=null">  
+              AND 	a.playerid = #{player.id}
+        </if>
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+	
+	
+	<select id="count" parameterType="grouping" resultType="int">
+		select 
+			count(*)
+		from grouping a
+		left join player b on a.playerid = b.id
+		inner join events c on a.eventsid = c.id
+        <if test="events != null and events.id!=null">  
+              AND 	a.eventsid = #{events.id}
+        </if>
+        <if test="player != null and player.id!=null">  
+              AND 	a.playerid = #{player.id}
+        </if>
+         <if test="name != null and '' != name">  
+              AND 	a.name = #{name}
+        </if>
+	</select>
+	
+	
+    <select id="delete" parameterType="grouping"  >
+    	delete from grouping where eventsid = #{events.id}
+    </select>
+    
+</mapper>

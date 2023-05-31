@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.games.NoticeDao">
+	<insert id="add"  parameterType="notice">
+		insert into notice(id,title,content,time) 
+		values (#{id},#{title},#{content},#{time});
+	</insert>
+	
+	<select id="findList" parameterType="notice" resultType="notice">
+		select id,title,content,time from notice 
+		<if test="title != null and '' != title">  
+              where title like '%' #{title} '%'
+        </if>
+        order by time desc 
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+	
+	
+	<select id="findOne" parameterType="notice" resultType="notice">
+		select id,title,content,time  from notice where id=#{id}
+	</select>
+	
+	
+	
+	<select id="count" parameterType="notice" resultType="int">
+		select count(*) from notice 
+		<if test="title != null and '' != title">  
+              where title like '%' #{title} '%'  
+        </if>
+	</select>
+	
+
+	
+	<update id="update" parameterType="notice">
+    	update notice set
+    	<trim suffixOverrides=",">
+			<if test="title!=null">title=#{title},</if>
+			<if test="content!=null">content=#{content},</if>
+			<if test="time!=null">time=#{time},</if>
+		</trim>
+		<where>id=#{id}</where>
+    </update>
+    
+
+	<delete id="delete" parameterType="notice">
+		delete from notice where id = #{id}
+	</delete>
+	
+</mapper>

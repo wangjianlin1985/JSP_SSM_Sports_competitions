@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.games.PlayerDao">
+	<insert id="add"  parameterType="player">
+		insert into player(id,realName,sex,dept,code,disease,remarks,userid) 
+		values (#{id},#{realName},#{sex},#{dept},#{code},#{disease},#{remarks},#{user.id});
+	</insert>
+	
+	<select id="findList" parameterType="player" resultType="player">
+		select 
+			a.id as "id",
+			a.realName,
+			a.sex,
+			a.dept,
+			a.code,
+			a.disease,
+			a.remarks,
+			a.userid as "user.id",
+			b.name as "user.name" 
+		from player a left join user b on a.userid = b.id	
+		where 1 = 1
+		<if test="sex != null and '' != sex">  
+              AND a.sex = #{sex}
+        </if>
+        <if test="keyword != null and '' != keyword">  
+              AND (
+              	a.realName like '%' #{keyword} '%'  or  
+              	a.code like '%' #{keyword} '%'  or  
+              	a.dept like '%' #{keyword} '%'  or  
+              	b.name like '%' #{keyword} '%'  
+              )
+        </if>
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+	
+	
+	<select id="findOneByUserid" parameterType="String" resultType="player">
+		select 
+			a.id as "id",
+			a.realName,
+			a.sex,
+			a.dept,
+			a.code,
+			a.disease,
+			a.remarks,
+			a.userid as "user.id",
+			b.name as "user.name" 
+		from player a left join user b on a.userid = b.id	
+		where a.userid = #{userid}
+	</select>
+	
+	<select id="count" parameterType="player" resultType="int">
+		select count(*) 
+			from player a left join user b on a.userid = b.id	
+		where 1 = 1
+		<if test="sex != null and '' != sex">  
+              AND a.sex = #{sex}
+        </if>
+        <if test="keyword != null and '' != keyword">  
+              AND (
+              	a.realName like '%' #{keyword} '%'  or  
+              	a.code like '%' #{keyword} '%'  or  
+              	a.dept like '%' #{keyword} '%'  or  
+              	b.name like '%' #{keyword} '%'  
+              )
+        </if>
+	</select>
+	
+
+	
+	<update id="update" parameterType="player">
+    	update player set
+    	<trim suffixOverrides=",">
+			<if test="dept!=null">dept=#{dept},</if>
+			<if test="code!=null">code=#{code},</if>
+			<if test="disease!=null">disease=#{disease},</if>
+			<if test="sex!=null">sex=#{sex},</if>
+			<if test="realName!=null">realName=#{realName},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+		</trim>
+		<where>id=#{id}</where>
+    </update>
+    
+
+	<delete id="delete" parameterType="player">
+		delete from player where id = #{id}
+	</delete>
+	
+</mapper>
